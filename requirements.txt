@@ -1,0 +1,6 @@
+pandas
+pyarrow
+openpyxl
+odfpy
+boto3
+python-dateutil

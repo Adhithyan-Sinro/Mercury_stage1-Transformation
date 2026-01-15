@@ -2,6 +2,7 @@ SHOP_SCHEMAS = {
 
     "amorino": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -10,6 +11,7 @@ SHOP_SCHEMAS = {
 
     "anima": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -18,6 +20,7 @@ SHOP_SCHEMAS = {
 
     "archipals": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -26,6 +29,7 @@ SHOP_SCHEMAS = {
 
     "armani_exchange": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -34,6 +38,7 @@ SHOP_SCHEMAS = {
 
     "barlowes": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -42,6 +47,7 @@ SHOP_SCHEMAS = {
 
     "cabana": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -50,6 +56,7 @@ SHOP_SCHEMAS = {
 
     "caffe": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -58,6 +65,7 @@ SHOP_SCHEMAS = {
 
     "calvin_klein": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -66,6 +74,7 @@ SHOP_SCHEMAS = {
 
     "calzedonia": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 0},
             "amount": {"index": 1}
@@ -74,6 +83,7 @@ SHOP_SCHEMAS = {
 
     "car_park": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -82,6 +92,7 @@ SHOP_SCHEMAS = {
 
     "daytona": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 0},
             "amount": {"index": 2}
@@ -106,6 +117,7 @@ SHOP_SCHEMAS = {
 
     "planet_play": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 0},
             "amount": {"index": 2}
@@ -114,6 +126,7 @@ SHOP_SCHEMAS = {
 
     "sterling": {
         "has_header": False,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 13},
             "amount": {"index": 6}
@@ -122,6 +135,7 @@ SHOP_SCHEMAS = {
 
     "swarovski": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -130,6 +144,7 @@ SHOP_SCHEMAS = {
 
     "tezenis": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -138,6 +153,7 @@ SHOP_SCHEMAS = {
 
     "thebodyshop": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -146,6 +162,7 @@ SHOP_SCHEMAS = {
 
     "tommy_hilfiger": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}
@@ -154,6 +171,7 @@ SHOP_SCHEMAS = {
 
     "urban_jungle": {
         "has_header": True,
+        "delimiter": ",",
         "columns": {
             "sale_date": {"index": 3},
             "amount": {"index": 5}

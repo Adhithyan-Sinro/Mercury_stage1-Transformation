@@ -1,7 +1,7 @@
 import logging
 from app.file_reader import read_file
 from app.schema_resolver import resolve_schema
-from app.shop_resolver import resolve_shop_from_filename
+from app.shop_name_resolver import resolve_shop_from_filename
 from app.shop_schema_config import SHOP_SCHEMAS
 from app.guards import (
     guard_non_empty,
@@ -16,25 +16,24 @@ logger = logging.getLogger(__name__)
 
 
 def process_one_file(file_ctx):
-    """
-    file_ctx contains:
-      - file_id
-      - filename
-      - bytes
-    """
+   
     try:
         # 1. Resolve shop
         shop_id = resolve_shop_from_filename(file_ctx.filename)
 
         # 2. Load schema contract
-        schema = SHOP_SCHEMAS[shop_id]
+        # schema = SHOP_SCHEMAS[shop_id]
+        
+        if shop_id not in SHOP_SCHEMAS:
+            raise ValueError(f"NO_SCHEMA_DEFINED_FOR_SHOP: {shop_id}")
+
 
         # 3. Read raw file
         df_raw = read_file(
             bytes_data=file_ctx.bytes,
             filename=file_ctx.filename,
-            has_header=schema["has_header"],
-            delimiter=schema.get("delimiter"),
+            has_header=SHOP_SCHEMAS[shop_id]["has_header"],
+            delimiter=SHOP_SCHEMAS[shop_id].get("delimiter"),
         )
 
         # 4. Apply schema mapping
@@ -43,6 +42,12 @@ def process_one_file(file_ctx):
         # 5. Guardrails (STRICT)
         guard_non_empty(df)
         guard_required_columns(df)
+        logger.info(
+            "Parsing sale_date",
+            extra={
+                "file_id": file_ctx.file_id, 
+                "rows": len(df)}
+        )
         df = guard_and_parse_sale_date(df)
         guard_partition_count(df)
 
@@ -51,13 +56,18 @@ def process_one_file(file_ctx):
         df["source_file_id"] = file_ctx.file_id
 
         # 7. Write curated partitions
-        write_partitions(df)
+        try:
+            write_partitions(df)
+        except Exception as e:
+            raise RuntimeError(f"WRITE_FAILED: {e}")
+
+        # write_partitions(df)
 
         # 8. Mark success
         mark_stage2_success(file_ctx.file_id)
 
     except Exception as e:
-        logger.error(
+        logger.exception(
             "STAGE2_FILE_FAILED",
             extra={
                 "file_id": file_ctx.file_id,

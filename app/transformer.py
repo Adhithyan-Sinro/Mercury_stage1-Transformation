@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime, timezone
 from dateutil import parser
 from app.schema_resolver import resolve_schema
-from app.shop_resolver import resolve_shop_from_filename
+from app.shop_name_resolver import resolve_shop_from_filename
 
 
 REQUIRED_COLUMNS = {"sale_date"}

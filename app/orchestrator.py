@@ -11,18 +11,27 @@ from app.guards import (
 )
 from app.writer import write_partitions
 from app.metadata import mark_stage2_success, mark_stage2_failed
+from app.transformer import aggregate_daily_sales
 
 logger = logging.getLogger(__name__)
 
 
 def process_one_file(file_ctx):
    
+    logger.info(
+    "STAGE2_PROCESSING_FILE",
+    extra={
+        "file_id": file_ctx.file_id,
+        "source_filename": file_ctx.filename,
+        },
+    )
+    
+
     try:
         # 1. Resolve shop
         shop_id = resolve_shop_from_filename(file_ctx.filename)
 
         # 2. Load schema contract
-        # schema = SHOP_SCHEMAS[shop_id]
         
         if shop_id not in SHOP_SCHEMAS:
             raise ValueError(f"NO_SCHEMA_DEFINED_FOR_SHOP: {shop_id}")
@@ -39,31 +48,51 @@ def process_one_file(file_ctx):
         # 4. Apply schema mapping
         df = resolve_schema(df_raw, shop_id=shop_id)
 
-        # 5. Guardrails (STRICT)
+        # 5. Guardrails 
         guard_non_empty(df)
-        guard_required_columns(df)
+        guard_required_columns(df, required=("sale_date", "amount"))
+
         logger.info(
             "Parsing sale_date",
             extra={
                 "file_id": file_ctx.file_id, 
-                "rows": len(df)}
+                "shop_id": shop_id,
+                "rows": len(df)
+                },
         )
-        df = guard_and_parse_sale_date(df)
-        guard_partition_count(df)
+
+        df = guard_and_parse_sale_date(df)       
 
         # 6. Enrichment
         df["shop_id"] = shop_id
         df["source_file_id"] = file_ctx.file_id
 
-        # 7. Write curated partitions
-        try:
-            write_partitions(df)
-        except Exception as e:
-            raise RuntimeError(f"WRITE_FAILED: {e}")
+        # 7. Transformation - aggregation
+        df_transformed = aggregate_daily_sales(df)
 
-        # write_partitions(df)
+        #8 Post-Transform guard
+        guard_partition_count(df_transformed)
 
-        # 8. Mark success
+        #9 Write
+        write_partitions(
+            df_transformed,
+            source_file_id=file_ctx.file_id,
+            shop_id=shop_id
+            )
+
+        #8. Log success
+
+        logger.info(
+            "STAGE2_FILE_SUCCESS",
+            extra={
+                "file_id": file_ctx.file_id,
+                "source_filename": file_ctx.filename,
+                "shop_id": shop_id,
+                "rows": len(df_transformed),
+            },
+        )
+        
+        # 9. Mark success
         mark_stage2_success(file_ctx.file_id)
 
     except Exception as e:

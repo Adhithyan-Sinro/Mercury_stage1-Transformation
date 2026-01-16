@@ -12,5 +12,5 @@ METADATA_TABLE = os.getenv("METADATA_TABLE")
 RAW_LOOKBACK_DAYS = int(os.getenv("RAW_LOOKBACK_DAYS", "7"))
 
 
-LOCAL_MODE = True
+LOCAL_MODE = False
 LOCAL_OUTPUT_DIR = "local_curated_output"

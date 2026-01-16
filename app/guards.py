@@ -1,4 +1,5 @@
 from dateutil import parser
+import pandas as pd
 
 def guard_non_empty(df):
     if df.empty:
@@ -12,21 +13,32 @@ def guard_required_columns(df, required=("sale_date",)):
 
 
 def guard_and_parse_sale_date(df):
-    try:
-        df["sale_date"] = df["sale_date"].apply(
-            lambda x: parser.parse(str(x)).date()
-        )
-    except Exception as e:
-        raise ValueError(f"SALE_DATE_PARSE_FAILED: {e}")
+    raw = df["sale_date"]
 
-    if df["sale_date"].isnull().any():
-        raise ValueError("SALE_DATE_NULL_AFTER_PARSE")
+    if raw.isnull().any():
+        raise ValueError("SALE_DATE_NULL_BEFORE_PARSE")
+    def _parse(value):
+        try:
+            return parser.parse(str(value), fuzzy=False).date()
+        except Exception:
+            raise ValueError(f"INVALID_SALES_DATE_VALUE: {value}")
+        
+    parsed = raw.apply(_parse)
+    
+    if parsed.isnull().any():
+        raise ValueError("SALE_DATE_NULL_AFTER_PARSE")  
 
+    df["sale_date"] = parsed
     return df
 
-
 def guard_partition_count(df, max_partitions=5):
-    if df["sale_date"].nunique() > max_partitions:
+    if not df["sale_date"].map(type).eq(type(df["sale_date"].iloc[0])).all():
+        raise ValueError("INCONSISTENT_SALE_DATE_TYPES")
+    
+    unique_dates = df["sale_date"].nunique()
+    
+    if unique_dates > max_partitions:
         raise ValueError(
-            f"EXCESSIVE_PARTITIONS_IN_FILE: {df['sale_date'].nunique()}"
+            f"EXCESSIVE_PARTITIONS_IN_FILE: {unique_dates}"
         )
+    

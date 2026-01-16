@@ -4,3 +4,4 @@ openpyxl
 odfpy
 boto3
 python-dateutil
+chardet

@@ -65,7 +65,7 @@ def write_partitions_s3(df, *, source_file_id: str, shop_id: str):
         key = (
             f"curated/sales/"
             f"year={year}/month={month}/day={day}/"
-            f"part-{source_file_id}.parquet"
+            f"part-{shop_id}_{source_file_id}.parquet"
         )
 
         table = pa.Table.from_pandas(group, preserve_index=False)

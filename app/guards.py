@@ -13,6 +13,8 @@ def guard_required_columns(df, required=("sale_date",)):
 
 
 def guard_and_parse_sale_date(df):
+
+    df = df[df["sale_date"].notna()].copy()
     raw = df["sale_date"]
 
     if raw.isnull().any():
